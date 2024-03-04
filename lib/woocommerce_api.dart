@@ -1,6 +1,5 @@
 library woocommerce_api;
 
-import 'dart:async';
 import "dart:collection";
 import 'dart:convert';
 import 'dart:io';
@@ -55,14 +54,8 @@ class WooCommerceAPI {
     if (this.isHttps == true) {
       return url +
           (containsQueryParams == true
-              ? "&consumer_key=" +
-                  this.consumerKey +
-                  "&consumer_secret=" +
-                  this.consumerSecret
-              : "?consumer_key=" +
-                  this.consumerKey +
-                  "&consumer_secret=" +
-                  this.consumerSecret);
+              ? "&consumer_key=" + this.consumerKey + "&consumer_secret=" + this.consumerSecret
+              : "?consumer_key=" + this.consumerKey + "&consumer_secret=" + this.consumerSecret);
     }
 
     Random rand = Random();
@@ -99,11 +92,7 @@ class WooCommerceAPI {
     String parameterString = "";
 
     for (var key in treeMap.keys) {
-      parameterString = parameterString +
-          Uri.encodeQueryComponent(key) +
-          "=" +
-          treeMap[key] +
-          "&";
+      parameterString = parameterString + Uri.encodeQueryComponent(key) + "=" + treeMap[key] + "&";
     }
 
     parameterString = parameterString.substring(0, parameterString.length - 1);
@@ -111,14 +100,12 @@ class WooCommerceAPI {
     String method = requestMethod;
     String baseString = method +
         "&" +
-        Uri.encodeQueryComponent(
-            containsQueryParams == true ? url.split("?")[0] : url) +
+        Uri.encodeQueryComponent(containsQueryParams == true ? url.split("?")[0] : url) +
         "&" +
         Uri.encodeQueryComponent(parameterString);
 
     String signingKey = consumerSecret + "&" + token;
-    crypto.Hmac hmacSha1 =
-        crypto.Hmac(crypto.sha1, utf8.encode(signingKey)); // HMAC-SHA1
+    crypto.Hmac hmacSha1 = crypto.Hmac(crypto.sha1, utf8.encode(signingKey)); // HMAC-SHA1
 
     /// The Signature is used by the server to verify the
     /// authenticity of the request and prevent unauthorized access.
@@ -130,17 +117,9 @@ class WooCommerceAPI {
     String requestUrl = "";
 
     if (containsQueryParams == true) {
-      requestUrl = url.split("?")[0] +
-          "?" +
-          parameterString +
-          "&oauth_signature=" +
-          Uri.encodeQueryComponent(finalSignature);
+      requestUrl = url.split("?")[0] + "?" + parameterString + "&oauth_signature=" + Uri.encodeQueryComponent(finalSignature);
     } else {
-      requestUrl = url +
-          "?" +
-          parameterString +
-          "&oauth_signature=" +
-          Uri.encodeQueryComponent(finalSignature);
+      requestUrl = url + "?" + parameterString + "&oauth_signature=" + Uri.encodeQueryComponent(finalSignature);
     }
 
     return requestUrl;
@@ -155,11 +134,9 @@ class WooCommerceAPI {
       case 401:
       case 404:
       case 500:
-        throw Exception(
-            WooCommerceError.fromJson(json.decode(response.body)).toString());
+        throw Exception(WooCommerceError.fromJson(json.decode(response.body)).toString());
       default:
-        throw Exception(
-            "An error occurred, status code: ${response.statusCode}");
+        throw Exception("An error occurred, status code: ${response.statusCode}");
     }
   }
 
@@ -182,12 +159,23 @@ class WooCommerceAPI {
 
     http.Client client = http.Client();
     http.Request request = http.Request('POST', Uri.parse(url));
-    request.headers[HttpHeaders.contentTypeHeader] =
-        'application/json; charset=utf-8';
+    request.headers[HttpHeaders.contentTypeHeader] = 'application/json; charset=utf-8';
     request.headers[HttpHeaders.cacheControlHeader] = "no-cache";
     request.body = json.encode(data);
-    String response =
-        await client.send(request).then((res) => res.stream.bytesToString());
+    String response = await client.send(request).then((res) => res.stream.bytesToString());
+    var dataResponse = await json.decode(response);
+    return dataResponse;
+  }
+
+  Future<dynamic> putAsync(String endPoint, Map data) async {
+    String url = this._getOAuthURL("PUT", endPoint);
+
+    http.Client client = http.Client();
+    http.Request request = http.Request('PUT', Uri.parse(url));
+    request.headers[HttpHeaders.contentTypeHeader] = 'application/json; charset=utf-8';
+    request.headers[HttpHeaders.cacheControlHeader] = "no-cache";
+    request.body = json.encode(data);
+    String response = await client.send(request).then((res) => res.stream.bytesToString());
     var dataResponse = await json.decode(response);
     return dataResponse;
   }

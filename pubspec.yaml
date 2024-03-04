@@ -1,7 +1,6 @@
 name: woocommerce_api
 description: A package to interact with the WooCommerce API (null-safe).
 version: 0.1.0
-author: Samarth Agarwal <samarthagarwal@live.com>
 homepage: https://github.com/samarthagarwal/woocommerce_dart
 
 dependencies:
