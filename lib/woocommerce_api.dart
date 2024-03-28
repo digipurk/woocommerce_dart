@@ -179,4 +179,18 @@ class WooCommerceAPI {
     var dataResponse = await json.decode(response);
     return dataResponse;
   }
+
+  Future<dynamic> deleteAsync(String endPoint) async {
+    String url = this._getOAuthURL("DELETE", endPoint);
+
+    try {
+      final http.Response response = await http.delete(Uri.parse(url));
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      _handleError(response);
+    } on SocketException {
+      throw Exception('No Internet connection.');
+    }
+  }
 }
