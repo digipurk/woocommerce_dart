@@ -48,7 +48,7 @@ class WooCommerceAPI {
     String consumerSecret = this.consumerSecret;
 
     String token = "";
-    String url = this.url + "/wp-json/wc/v2/" + endpoint;
+    String url = this.url + "/wp-json/wc/v3/" + endpoint;
     bool containsQueryParams = url.contains("?");
 
     if (this.isHttps == true) {
